@@ -1,0 +1,5 @@
+/.*            export-ignore
+/README.md     export-ignore
+/composer.lock export-ignore
+/phpunit.xml   export-ignore
+/tests         export-ignore

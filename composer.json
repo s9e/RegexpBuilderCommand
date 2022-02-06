@@ -1,0 +1,24 @@
+{
+	"name": "s9e/regexp-builder-command",
+	"description": "Console command that generates a regexp from a list of strings.",
+	"homepage": "https://github.com/s9e/RegexpBuilderCommand/",
+	"keywords": ["cli", "regexp"],
+	"license": "MIT",
+	"require": {
+		"s9e/regexp-builder": "^1.4",
+		"symfony/console":    "^6.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "*"
+	},
+	"autoload": {
+		"psr-4": {
+			"s9e\\RegexpBuilder\\Command\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"s9e\\RegexpBuilder\\Tests\\Command\\": "tests"
+		}
+	}
+}

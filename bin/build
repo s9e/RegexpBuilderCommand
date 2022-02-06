@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php declare(strict_types=1);
+
+include __DIR__ . '/../vendor/autoload.php';
+
+$command = new s9e\RegexpBuilder\Command\Build;
+
+$app = new Symfony\Component\Console\Application;
+$app->add($command);
+$app->setDefaultCommand($command->getName());
+$app->run();
