@@ -21,5 +21,8 @@
 			"s9e\\RegexpBuilder\\Tests\\Command\\": "tests"
 		}
 	},
+	"scripts": {
+		"test": "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text"
+	},
 	"bin": ["bin/build-regexp"]
 }
