@@ -7,5 +7,5 @@ $command = new s9e\RegexpBuilder\Command\Build;
 
 $app = new Symfony\Component\Console\Application;
 $app->add($command);
-$app->setDefaultCommand($command->getName());
+$app->setDefaultCommand($command->getName(), true);
 $app->run();
