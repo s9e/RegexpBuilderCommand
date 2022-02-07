@@ -20,5 +20,6 @@
 		"psr-4": {
 			"s9e\\RegexpBuilder\\Tests\\Command\\": "tests"
 		}
-	}
+	},
+	"bin": ["bin/build-regexp"]
 }
