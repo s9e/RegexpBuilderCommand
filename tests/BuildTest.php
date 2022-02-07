@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace s9e\RegexpBuilder\Tests;
+namespace s9e\RegexpBuilder\Command\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
