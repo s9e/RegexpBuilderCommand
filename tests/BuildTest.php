@@ -56,14 +56,14 @@ class BuildTest extends TestCase
 			[
 				[
 					'strings'  => ["\u{1F600}", "\u{1F601}"],
-					'--preset' =>'php'
+					'--preset' => 'pcre'
 				],
 				'\\xF0\\x9F\\x98[\\x80\\x81]'
 			],
 			[
 				[
 					'strings'   => ["\u{1F600}", "\u{1F601}"],
-					'--preset'  =>'php',
+					'--preset'  => 'pcre',
 					'--unicode' => true
 				],
 				'[\\x{1F600}\\x{1F601}]'

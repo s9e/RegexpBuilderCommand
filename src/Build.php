@@ -39,7 +39,7 @@ class Build extends Command
 			'preset',
 			null,
 			InputOption::VALUE_REQUIRED,
-			'Regexp preset: "javascript", "php", or "raw"',
+			'Regexp preset: "javascript", "pcre", or "raw"',
 			'raw'
 		);
 		$this->addOption(
@@ -139,11 +139,11 @@ class Build extends Command
 				'inputOptions' => ['useSurrogates' => false],
 				'output'       => 'JavaScript'
 			],
-			'php' => [
+			'pcre' => [
 				'input'  => 'Bytes',
 				'output' => 'PHP'
 			],
-			'php-unicode' => [
+			'pcre-unicode' => [
 				'input'  => 'Utf8',
 				'output' => 'PHP'
 			],
