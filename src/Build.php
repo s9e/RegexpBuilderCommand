@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use UnhandledMatchError;
 use s9e\RegexpBuilder\Builder;
 
 class Build extends Command
@@ -22,6 +23,26 @@ class Build extends Command
 
 	protected function configure(): void
 	{
+		$this->addOption(
+			'preset',
+			null,
+			InputOption::VALUE_REQUIRED,
+			'Regexp preset: "javascript", "pcre", or "raw"',
+			'raw'
+		);
+		$this->addOption(
+			'flags',
+			null,
+			InputOption::VALUE_REQUIRED,
+			'Regexp flags',
+			''
+		);
+		$this->addOption(
+			'standalone',
+			null,
+			InputOption::VALUE_NONE,
+			'Whether to create a standalone regexp including the delimiters'
+		);
 		$this->addOption(
 			'infile',
 			null,
@@ -36,49 +57,10 @@ class Build extends Command
 			'-'
 		);
 		$this->addOption(
-			'preset',
-			null,
-			InputOption::VALUE_REQUIRED,
-			'Regexp preset: "javascript", "pcre", or "raw"',
-			'raw'
-		);
-		$this->addOption(
-			'unicode',
-			null,
-			InputOption::VALUE_NEGATABLE,
-			'Whether to operate on Unicode codepoints rather than on bytes'
-		);
-		$this->addOption(
 			'overwrite',
 			null,
 			InputOption::VALUE_NEGATABLE,
 			'Whether to overwrite existing files'
-		);
-
-//		$this->addOption(
-//			'input-mode',
-//			null,
-//			InputOption::VALUE_REQUIRED,
-//			'Force input mode: "Bytes" or "Utf8"'
-//		);
-//		$this->addOption(
-//			'output-mode',
-//			null,
-//			InputOption::VALUE_REQUIRED,
-//			'Force output mode: "Bytes", "JavaScript", "PHP", or "Utf8"'
-//		);
-		$this->addOption(
-			'delimiter',
-			null,
-			InputOption::VALUE_REQUIRED,
-			'Character used as delimiter',
-			'/'
-		);
-		$this->addOption(
-			'standalone',
-			null,
-			InputOption::VALUE_NONE,
-			'Whether to create a standalone regexp including the delimiters'
 		);
 
 		$this->addArgument('strings', InputArgument::IS_ARRAY);
@@ -98,11 +80,7 @@ class Build extends Command
 
 		if ($input->getOption('standalone'))
 		{
-			$regexp = substr($config['delimiter'], 0, 1) . $regexp . substr($config['delimiter'], -1);
-			if ($input->getOption('unicode'))
-			{
-				$regexp .= 'u';
-			}
+			$regexp = substr($config['delimiter'], 0, 1) . $regexp . substr($config['delimiter'], -1) . $this->sortFlags($input->getOption('flags'));
 		}
 
 		$filepath = $input->getOption('outfile');
@@ -113,8 +91,6 @@ class Build extends Command
 		elseif (file_exists($filepath) && !$input->getOption('overwrite'))
 		{
 			throw new RuntimeException("File '" . $filepath . "' already exists");
-
-			return Command::FAILURE;
 		}
 		elseif (!is_writable($filepath) || !file_put_contents($filepath, $regexp))
 		{
@@ -126,37 +102,48 @@ class Build extends Command
 
 	protected function getBuilderConfig(InputInterface $input): array
 	{
-		$preset = strtolower($input->getOption('preset')) . ($input->getOption('unicode') ? '-unicode' : '');
-		$config = match ($preset)
+		$preset = strtolower($input->getOption('preset'));
+		if (str_contains($input->getOption('flags'), 'u'))
 		{
-			'javascript' => [
-				'input'        => 'Utf8',
-				'inputOptions' => ['useSurrogates' => true],
-				'output'       => 'JavaScript'
-			],
-			'javascript-unicode' => [
-				'input'        => 'Utf8',
-				'inputOptions' => ['useSurrogates' => false],
-				'output'       => 'JavaScript'
-			],
-			'pcre' => [
-				'input'  => 'Bytes',
-				'output' => 'PHP'
-			],
-			'pcre-unicode' => [
-				'input'  => 'Utf8',
-				'output' => 'PHP'
-			],
-			'raw' => [
-				'input'  => 'Bytes',
-				'output' => 'Bytes'
-			],
-			'raw-unicode' => [
-				'input'  => 'Utf8',
-				'output' => 'Utf8'
-			]
-		};
-		$config['delimiter'] = $input->getOption('delimiter');
+			$preset .= '-unicode';
+		}
+		try
+		{
+			$config = match ($preset)
+			{
+				'javascript' => [
+					'input'        => 'Utf8',
+					'inputOptions' => ['useSurrogates' => true],
+					'output'       => 'JavaScript'
+				],
+				'javascript-unicode' => [
+					'input'        => 'Utf8',
+					'inputOptions' => ['useSurrogates' => false],
+					'output'       => 'JavaScript'
+				],
+				'pcre' => [
+					'input'  => 'Bytes',
+					'output' => 'PHP'
+				],
+				'pcre-unicode' => [
+					'input'  => 'Utf8',
+					'output' => 'PHP'
+				],
+				'raw' => [
+					'input'  => 'Bytes',
+					'output' => 'Bytes'
+				],
+				'raw-unicode' => [
+					'input'  => 'Utf8',
+					'output' => 'Utf8'
+				]
+			};
+		}
+		catch (UnhandledMatchError)
+		{
+			throw new RuntimeException("Unknown preset '" . $preset . "'");
+		}
+		$config['delimiter'] = '/';
 
 		return $config;
 	}
@@ -196,5 +183,13 @@ class Build extends Command
 		      : $this->getContentFromFile($filepath);
 
 		return preg_split('(\\r?\\n)', $text, -1, PREG_SPLIT_NO_EMPTY);
+	}
+
+	protected function sortFlags(string $flags): string
+	{
+		$flags = array_unique(str_split($flags, 1));
+		sort($flags, SORT_STRING);
+
+		return implode('', $flags);
 	}
 }

@@ -48,8 +48,8 @@ class BuildTest extends TestCase
 			],
 			[
 				[
-					'strings'   => ["\u{1F600}", "\u{1F601}"],
-					'--unicode' => true
+					'strings' => ["\u{1F600}", "\u{1F601}"],
+					'--flags' => 'u'
 				],
 				"[\u{1F600}\u{1F601}]"
 			],
@@ -62,9 +62,9 @@ class BuildTest extends TestCase
 			],
 			[
 				[
-					'strings'   => ["\u{1F600}", "\u{1F601}"],
-					'--preset'  => 'pcre',
-					'--unicode' => true
+					'strings'  => ["\u{1F600}", "\u{1F601}"],
+					'--flags'  => 'u',
+					'--preset' => 'pcre'
 				],
 				'[\\x{1F600}\\x{1F601}]'
 			],
@@ -77,9 +77,9 @@ class BuildTest extends TestCase
 			],
 			[
 				[
-					'strings'   => ["\u{1F600}", "\u{1F601}"],
-					'--preset'  => 'javascript',
-					'--unicode' => true
+					'strings'  => ["\u{1F600}", "\u{1F601}"],
+					'--flags'  => 'u',
+					'--preset' => 'javascript'
 				],
 				'[\\u{1F600}\\u{1F601}]'
 			],
@@ -94,9 +94,9 @@ class BuildTest extends TestCase
 			[
 				[
 					'strings'      => ["\u{1F600}", "\u{1F601}"],
+					'--flags'      => 'u',
 					'--preset'     => 'javascript',
-					'--standalone' => true,
-					'--unicode'    => true
+					'--standalone' => true
 				],
 				'/[\\u{1F600}\\u{1F601}]/u'
 			],
