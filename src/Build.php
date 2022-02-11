@@ -27,7 +27,7 @@ class Build extends Command
 			'preset',
 			null,
 			InputOption::VALUE_REQUIRED,
-			'Regexp preset: "javascript", "pcre", or "raw"',
+			'Regexp preset: "java", "javascript", "pcre", "raw", or "re2"',
 			'pcre'
 		);
 		$this->addOption(
@@ -41,7 +41,7 @@ class Build extends Command
 			'standalone',
 			null,
 			InputOption::VALUE_NONE,
-			'Whether to create a standalone regexp including the delimiters'
+			'Whether to create a standalone regexp including the delimiters and flags'
 		);
 		$this->addOption(
 			'infile',
