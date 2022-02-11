@@ -5,6 +5,7 @@
 	"keywords": ["cli", "regexp"],
 	"license": "MIT",
 	"require": {
+		"php":                ">=8.1",
 		"s9e/regexp-builder": "^1.4",
 		"symfony/console":    "^6.0"
 	},

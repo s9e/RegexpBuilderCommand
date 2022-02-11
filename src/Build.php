@@ -28,7 +28,7 @@ class Build extends Command
 			null,
 			InputOption::VALUE_REQUIRED,
 			'Regexp preset: "javascript", "pcre", or "raw"',
-			'raw'
+			'pcre'
 		);
 		$this->addOption(
 			'flags',
@@ -60,7 +60,8 @@ class Build extends Command
 			'overwrite',
 			null,
 			InputOption::VALUE_NEGATABLE,
-			'Whether to overwrite existing files'
+			'Whether to overwrite existing files',
+			false
 		);
 
 		$this->addArgument('strings', InputArgument::IS_ARRAY);
@@ -88,13 +89,9 @@ class Build extends Command
 		{
 			$output->write($regexp);
 		}
-		elseif (file_exists($filepath) && !$input->getOption('overwrite'))
+		else
 		{
-			throw new RuntimeException("File '" . $filepath . "' already exists");
-		}
-		elseif (!is_writable($filepath) || !file_put_contents($filepath, $regexp))
-		{
-			throw new RuntimeException("Cannot write to '" . $filepath . "'");
+			$this->writeFile($filepath, $regexp, $input->getOption('overwrite'));
 		}
 
 		return Command::SUCCESS;
@@ -102,40 +99,32 @@ class Build extends Command
 
 	protected function getBuilderConfig(InputInterface $input): array
 	{
-		$preset = strtolower($input->getOption('preset'));
-		if (str_contains($input->getOption('flags'), 'u'))
-		{
-			$preset .= '-unicode';
-		}
+		$preset  = strtolower($input->getOption('preset'));
+		$unicode = str_contains($input->getOption('flags'), 'u');
 		try
 		{
 			$config = match ($preset)
 			{
+				'java' => [
+					'input'  => 'Utf8',
+					'output' => 'PHP'
+				],
 				'javascript' => [
 					'input'        => 'Utf8',
-					'inputOptions' => ['useSurrogates' => true],
-					'output'       => 'JavaScript'
-				],
-				'javascript-unicode' => [
-					'input'        => 'Utf8',
-					'inputOptions' => ['useSurrogates' => false],
+					'inputOptions' => ['useSurrogates' => !$unicode],
 					'output'       => 'JavaScript'
 				],
 				'pcre' => [
-					'input'  => 'Bytes',
+					'input'  => ($unicode) ? 'Utf8' : 'Bytes',
 					'output' => 'PHP'
 				],
-				'pcre-unicode' => [
+				're2' => [
 					'input'  => 'Utf8',
 					'output' => 'PHP'
 				],
 				'raw' => [
-					'input'  => 'Bytes',
-					'output' => 'Bytes'
-				],
-				'raw-unicode' => [
-					'input'  => 'Utf8',
-					'output' => 'Utf8'
+					'input'  => ($unicode) ? 'Utf8' : 'Bytes',
+					'output' => ($unicode) ? 'Utf8' : 'Bytes',
 				]
 			};
 		}
@@ -148,7 +137,20 @@ class Build extends Command
 		return $config;
 	}
 
-	protected function getContentFromFile(string $filepath): string
+	protected function getStrings(InputInterface $input): array
+	{
+		$filepath = $input->getOption('infile');
+		if ($filepath === null)
+		{
+			return $input->getArgument('strings');
+		}
+
+		$text = ($filepath === '-') ? $this->readStdin($input) : $this->readFile($filepath);
+
+		return preg_split('(\\R)', $text, -1, PREG_SPLIT_NO_EMPTY);
+	}
+
+	protected function readFile(string $filepath): string
 	{
 		if (!file_exists($filepath))
 		{
@@ -162,27 +164,12 @@ class Build extends Command
 		return file_get_contents($filepath);
 	}
 
-	protected function getContentFromStdin(InputInterface $input): string
+	protected function readStdin(InputInterface $input): string
 	{
 		// https://github.com/symfony/symfony/issues/37835#issuecomment-674386588
 		$stream = ($input instanceof StreamableInputInterface) ? $input->getStream() : null;
 
 		return stream_get_contents($stream ?? STDIN);
-	}
-
-	protected function getStrings(InputInterface $input): array
-	{
-		$filepath = $input->getOption('infile');
-		if ($filepath === null)
-		{
-			return $input->getArgument('strings');
-		}
-
-		$text = ($filepath === '-')
-		      ? $this->getContentFromStdin($input)
-		      : $this->getContentFromFile($filepath);
-
-		return preg_split('(\\r?\\n)', $text, -1, PREG_SPLIT_NO_EMPTY);
 	}
 
 	protected function sortFlags(string $flags): string
@@ -191,5 +178,24 @@ class Build extends Command
 		sort($flags, SORT_STRING);
 
 		return implode('', $flags);
+	}
+
+	protected function writeFile(string $filepath, string $contents, bool $overwrite): void
+	{
+		if (file_exists($filepath))
+		{
+			if (!$overwrite)
+			{
+				throw new RuntimeException("File '" . $filepath . "' already exists");
+			}
+			if (!is_writable($filepath))
+			{
+				throw new RuntimeException("File '" . $filepath . "' is not writable");
+			}
+		}
+		if (!is_writable(dirname($filepath)) || !file_put_contents($filepath, $contents))
+		{
+			throw new RuntimeException("File '" . $filepath . "' is not writable");
+		}
 	}
 }
