@@ -186,7 +186,7 @@ class Build extends Command
 		{
 			if (!$overwrite)
 			{
-				throw new RuntimeException("File '" . $filepath . "' already exists");
+				throw new RuntimeException("File '" . $filepath . "' already exists and overwrite is not enabled");
 			}
 			if (!is_writable($filepath))
 			{
