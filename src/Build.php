@@ -147,7 +147,7 @@ class Build extends Command
 
 		$text = ($filepath === '-') ? $this->readStdin($input) : $this->readFile($filepath);
 
-		return preg_split('(\\R)', $text, -1, PREG_SPLIT_NO_EMPTY);
+		return preg_split('(\\r?\\n)', $text, -1, PREG_SPLIT_NO_EMPTY);
 	}
 
 	protected function readFile(string $filepath): string
