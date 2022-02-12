@@ -6,6 +6,7 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Console\Tester\CommandTester;
+use org\bovigo\vfs\vfsStream;
 use s9e\RegexpBuilder\Command\Build;
 
 /**
@@ -13,33 +14,11 @@ use s9e\RegexpBuilder\Command\Build;
 */
 class BuildTest extends TestCase
 {
-	protected static $tmpfiles = [];
-
-	public static function tearDownAfterClass(): void
-	{
-		foreach (self::$tmpfiles as $path)
-		{
-			if (file_exists($path))
-			{
-				unlink($path);
-			}
-		}
-		self::$tmpfiles = [];
-	}
-
-	protected function tmpfile(string $path)
-	{
-		return self::$tmpfiles[] = $path;
-	}
 
 	public function testWriteFile()
 	{
-		$filepath = sys_get_temp_dir() . '/out.txt';
-		self::$tmpfiles[] = $filepath;
-		if (file_exists($filepath))
-		{
-			unlink($filepath);
-		}
+		vfsStream::setup('root');
+		$filepath = vfsStream::url('root/out.txt');
 
 		$commandTester = new CommandTester(new Build);
 		$commandTester->execute([
@@ -54,32 +33,19 @@ class BuildTest extends TestCase
 
 	public function testWriteFileFailure()
 	{
-		$dir = uniqid(sys_get_temp_dir() . '/');
-		if (!file_exists($dir))
-		{
-			mkdir($dir);
-		}
-		chmod($dir, 0555);
+		vfsStream::setup('root');
+		mkdir(vfsStream::url('root/unwritable'));
+		chmod(vfsStream::url('root/unwritable'), 0555);
+		$filepath = vfsStream::url('root/unwritable/file.txt');
 
 		$this->expectException('RuntimeException');
-		$this->expectExceptionMessage("File '" . $dir . "/foo.txt' is not writable");
+		$this->expectExceptionMessage("File '" . $filepath . "' is not writable");
 
-		try
-		{
-			$commandTester = new CommandTester(new Build);
-			$commandTester->execute([
-				'strings'   => ['x', 'y'],
-				'--outfile' => $dir . '/foo.txt'
-			]);
-		}
-		catch (Exception $e)
-		{
-			throw $e;
-		}
-		finally
-		{
-			rmdir($dir);
-		}
+		$commandTester = new CommandTester(new Build);
+		$commandTester->execute([
+			'strings'   => ['x', 'y'],
+			'--outfile' => $filepath
+		]);
 	}
 
 	/**
@@ -193,12 +159,12 @@ class BuildTest extends TestCase
 			],
 			[
 				[
-					'--infile' => $this->tmpfile(sys_get_temp_dir() . '/strings.txt')
+					'--infile' => vfsStream::url('root/strings.txt')
 				],
 				'[ab]',
 				function (CommandTester $commandTester): void
 				{
-					file_put_contents($this->tmpfile(sys_get_temp_dir() . '/strings.txt'), "a\nb");
+					file_put_contents(vfsStream::url('root/strings.txt'), "a\nb");
 				}
 			],
 			[
@@ -233,7 +199,7 @@ class BuildTest extends TestCase
 
 	public function getFailureTests(): array
 	{
-		$tmpDir = sys_get_temp_dir();
+		vfsStream::setup('root');
 
 		return [
 			[
@@ -255,53 +221,53 @@ class BuildTest extends TestCase
 			],
 			[
 				[
-					'--infile' => $tmpDir . '/unknown.txt'
+					'--infile' => vfsStream::url('root/unknown.txt')
 				],
-				new RuntimeException("File '" . $tmpDir . "/unknown.txt' does not exist")
+				new RuntimeException("File '" . vfsStream::url('root/unknown.txt') . "' does not exist")
 			],
 			[
 				[
-					'--infile' => $tmpDir . '/unreadable.txt'
+					'--infile' => vfsStream::url('root/unreadable.txt')
 				],
-				new RuntimeException("File '" . $tmpDir . "/unreadable.txt' is not readable"),
-				function () use ($tmpDir)
+				new RuntimeException("File '" . vfsStream::url('root/unreadable.txt') . "' is not readable"),
+				function ()
 				{
-					$path = $this->tmpfile($tmpDir . '/unreadable.txt');
+					$path = vfsStream::url('root/unreadable.txt');
 					touch($path);
 					chmod($path, 0);
 				}
 			],
 			[
 				[
-					'--infile' => $tmpDir . '/empty.txt'
+					'--infile' => vfsStream::url('root/empty.txt')
 				],
 				new RuntimeException('No input'),
-				function () use ($tmpDir)
+				function ()
 				{
-					touch($this->tmpfile($tmpDir . '/empty.txt'));
+					touch(vfsStream::url('root/empty.txt'));
 				}
 			],
 			[
 				[
 					'strings'   => ['foo'],
-					'--outfile' => $tmpDir . '/exists.txt'
+					'--outfile' => vfsStream::url('root/exists.txt')
 				],
-				new RuntimeException("File '" . $tmpDir . "/exists.txt' already exists"),
-				function () use ($tmpDir)
+				new RuntimeException("File '" . vfsStream::url('root/exists.txt') . "' already exists"),
+				function ()
 				{
-					touch($this->tmpfile($tmpDir . '/exists.txt'));
+					touch(vfsStream::url('root/exists.txt'));
 				}
 			],
 			[
 				[
 					'strings'     => ['foo'],
 					'--overwrite' => true,
-					'--outfile'   => $tmpDir . '/unwritable.txt'
+					'--outfile'   => vfsStream::url('root/unwritable.txt')
 				],
-				new RuntimeException("File '" . $tmpDir . "/unwritable.txt' is not writable"),
-				function () use ($tmpDir)
+				new RuntimeException("File '" . vfsStream::url('root/unwritable.txt') . "' is not writable"),
+				function ()
 				{
-					$path = $this->tmpfile($tmpDir . '/unwritable.txt');
+					$path = vfsStream::url('root/unwritable.txt');
 					touch($path);
 					chmod($path, 0);
 				}

@@ -10,7 +10,8 @@
 		"symfony/console":    "^6.0"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "*"
+		"mikey179/vfsstream": "^1.6",
+		"phpunit/phpunit":    "*"
 	},
 	"autoload": {
 		"psr-4": {
