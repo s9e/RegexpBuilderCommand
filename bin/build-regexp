@@ -16,8 +16,12 @@ else
 	exit(1);
 }
 
-
-$command = new s9e\RegexpBuilder\Command\Build;
+// Set the default name to match the name of this file
+class SingleCommand extends s9e\RegexpBuilder\Command\Build
+{
+	protected static $defaultName = 'build-regexp';
+}
+$command = new SingleCommand;
 
 $app = new Symfony\Component\Console\Application;
 $app->add($command);
