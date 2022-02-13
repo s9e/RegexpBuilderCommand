@@ -37,12 +37,12 @@ class Build extends Command
 			'Regexp flags',
 			''
 		);
-		$this->addOption(
-			'standalone',
-			null,
-			InputOption::VALUE_NONE,
-			'Whether to create a standalone regexp including the delimiters and flags'
-		);
+//		$this->addOption(
+//			'standalone',
+//			null,
+//			InputOption::VALUE_NONE,
+//			'Whether to create a standalone regexp including the delimiters and flags'
+//		);
 		$this->addOption(
 			'infile',
 			null,
@@ -79,10 +79,10 @@ class Build extends Command
 		$builder = new Builder($config);
 		$regexp  = $builder->build($strings);
 
-		if ($input->getOption('standalone'))
-		{
-			$regexp = substr($config['delimiter'], 0, 1) . $regexp . substr($config['delimiter'], -1) . $this->sortFlags($input->getOption('flags'));
-		}
+//		if ($input->getOption('standalone'))
+//		{
+//			$regexp = substr($config['delimiter'], 0, 1) . $regexp . substr($config['delimiter'], -1) . $this->sortFlags($input->getOption('flags'));
+//		}
 
 		$filepath = $input->getOption('outfile');
 		if ($filepath === '-')

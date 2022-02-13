@@ -74,13 +74,13 @@ class BuildTest extends TestCase
 				],
 				'(?:bar|foo)'
 			],
-			[
-				[
-					'strings'      => ['foo', 'bar'],
-					'--standalone' => true
-				],
-				'/(?:bar|foo)/'
-			],
+//			[
+//				[
+//					'strings'      => ['foo', 'bar'],
+//					'--standalone' => true
+//				],
+//				'/(?:bar|foo)/'
+//			],
 			[
 				[
 					'strings'  => ["\u{1F600}", "\u{1F601}"],
@@ -126,23 +126,23 @@ class BuildTest extends TestCase
 				],
 				'[\\u{1F600}\\u{1F601}]'
 			],
-			[
-				[
-					'strings'      => ["\u{1F600}", "\u{1F601}"],
-					'--preset'     => 'javascript',
-					'--standalone' => true
-				],
-				'/\\uD83D[\\uDE00\\uDE01]/'
-			],
-			[
-				[
-					'strings'      => ["\u{1F600}", "\u{1F601}"],
-					'--flags'      => 'u',
-					'--preset'     => 'javascript',
-					'--standalone' => true
-				],
-				'/[\\u{1F600}\\u{1F601}]/u'
-			],
+//			[
+//				[
+//					'strings'      => ["\u{1F600}", "\u{1F601}"],
+//					'--preset'     => 'javascript',
+//					'--standalone' => true
+//				],
+//				'/\\uD83D[\\uDE00\\uDE01]/'
+//			],
+//			[
+//				[
+//					'strings'      => ["\u{1F600}", "\u{1F601}"],
+//					'--flags'      => 'u',
+//					'--preset'     => 'javascript',
+//					'--standalone' => true
+//				],
+//				'/[\\u{1F600}\\u{1F601}]/u'
+//			],
 			[
 				[
 					'strings'  => ["\u{1F600}", "\u{1F601}"],
