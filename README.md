@@ -44,7 +44,7 @@ Several presets are available to generate regexps for different engines. They de
  - `javascript` escapes non-printing characters and characters outside of low ASCII as `\xhh`, `\uhhhh`, and `\u{hhhhh}`. If the `u` flag is not present, characters outside the BMP are split into surrogate pairs.
  - `raw` does not escape any literals. If the `u` flag is specified, the regexp operates on Unicode codepoints. Otherwise, it operates on bytes and is not guaranteed to produce a UTF-8 string.
 
-The following examples show the results of a few different presets with Unicode characters as input.
+The following examples show the results of a few different presets with the Unicode characters U+1F601 and U+1F602 as input.
 ```
 $ ./vendor/bin/build-regexp --preset pcre "😁" "😂"
 \xF0\x9F\x98[\x81\x82]
