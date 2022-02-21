@@ -35,6 +35,31 @@ $ cat out.txt
 ```
 
 
+### Presets
+
+Several presets are available to generate regexps for different engines. They determine how the input is interpreted, and how/which characters are escaped in the output. The following presets are available:
+
+ - `pcre` escapes non-printing characters and characters outside of low ASCII using [PCRE's escape sequences](https://www.pcre.org/current/doc/html/pcre2syntax.html#SEC3) `\xhh` and `\x{hh..}`. If the `u` flag is specified, the regexp operates on Unicode codepoints. Otherwise, it operates on bytes.
+ - `java` and `re2` are functionally identical to `pcre` and always operate on Unicode codepoints.
+ - `javascript` escapes non-printing characters and characters outside of low ASCII as `\xhh`, `\uhhhh`, and `\u{hhhhh}`. If the `u` flag is not present, characters outside the BMP are split into surrogate pairs.
+ - `raw` does not escape any literals. If the `u` flag is specified, the regexp operates on Unicode codepoints. Otherwise, it operates on bytes and is not guaranteed to produce a UTF-8 string.
+
+The following examples show the results of a few different presets with Unicode characters as input.
+```
+$ ./vendor/bin/build-regexp --preset pcre "😁" "😂"
+\xF0\x9F\x98[\x81\x82]
+
+$ ./vendor/bin/build-regexp --preset javascript "😁" "😂"
+\uD83D[\uDE01\uDE02]
+
+$ ./vendor/bin/build-regexp --preset pcre --flags u "😁" "😂"
+[\x{1F601}\x{1F602}]
+
+$ ./vendor/bin/build-regexp --preset javascript --flags u "😁" "😂"
+[\u{1F601}\u{1F602}]
+```
+
+
 ### See also
 
  - https://github.com/s9e/RegexpBuilder - The library that powers this tool.
