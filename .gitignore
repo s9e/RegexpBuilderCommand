@@ -1,3 +1,5 @@
 /.phpunit.result.cache
+/bin/box.phar
+/bin/build-regexp.phar
 /composer.lock
 /vendor

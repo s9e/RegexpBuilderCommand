@@ -24,7 +24,8 @@
 		}
 	},
 	"scripts": {
-		"test": "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text"
+		"build": "php bin/box.phar compile",
+		"test":  "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text"
 	},
 	"bin": ["bin/build-regexp"]
 }

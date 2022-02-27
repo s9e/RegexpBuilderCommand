@@ -1,19 +1,22 @@
 #!/usr/bin/env php
 <?php declare(strict_types=1);
 
-if (file_exists(__DIR__ . '/../../../autoload.php'))
+if (!class_exists('s9e\\RegexpBuilder\\Command\\Build'))
 {
-	include __DIR__ . '/../../../autoload.php';
-}
-elseif (file_exists(__DIR__ . '/../vendor/autoload.php'))
-{
-	include __DIR__ . '/../vendor/autoload.php';
-}
-else
-{
-	echo "Cannot find autoload.php\n";
+	if (file_exists(__DIR__ . '/../../../autoload.php'))
+	{
+		include __DIR__ . '/../../../autoload.php';
+	}
+	elseif (file_exists(__DIR__ . '/../vendor/autoload.php'))
+	{
+		include __DIR__ . '/../vendor/autoload.php';
+	}
+	else
+	{
+		echo "Cannot find autoload.php\n";
 
-	exit(1);
+		exit(1);
+	}
 }
 
 // Set the default name to match the name of this file

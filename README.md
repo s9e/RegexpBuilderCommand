@@ -60,6 +60,11 @@ $ ./vendor/bin/build-regexp --preset javascript --flags u "😁" "😂"
 ```
 
 
+### Maintenance
+
+To generate `build-regexp.phar` you'll need to [download a recent release](https://github.com/box-project/box/releases) of `box.phar` and save it to the `bin` directory, then run `composer build`.
+
+
 ### See also
 
  - https://github.com/s9e/RegexpBuilder - The library that powers this tool.
