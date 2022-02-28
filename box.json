@@ -1,3 +1,4 @@
 {
-	"compression": "GZ"
+	"compression": "GZ",
+	"git-tag": "git_tag"
 }

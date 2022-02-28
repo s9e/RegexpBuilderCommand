@@ -26,7 +26,7 @@ class SingleCommand extends s9e\RegexpBuilder\Command\Build
 }
 $command = new SingleCommand;
 
-$app = new Symfony\Component\Console\Application;
+$app = new Symfony\Component\Console\Application($command->getName(), '@git_tag@');
 $app->add($command);
 $app->setDefaultCommand($command->getName(), true);
 $app->run();
