@@ -22,6 +22,9 @@ jobs:
       - name: Install dependencies
         run: composer install --no-dev --no-interaction --no-progress
 
+      - name: Install box.phar
+        run: curl -Lo bin/box.phar https://github.com/box-project/box/releases/latest/download/box.phar
+
       - name: Build PHAR
         run: composer build-phar
 
