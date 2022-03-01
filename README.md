@@ -5,7 +5,7 @@
 
 ### Installation
 
-Using [Composer](https://getcomposer.org/download/):
+You can download the [latest release as a PHAR](https://github.com/s9e/RegexpBuilderCommand/releases/latest/download/build-regexp.phar), or install it as a [Composer](https://getcomposer.org/download/) dependency:
 
 ```bash
 composer require s9e/regexp-builder-command
