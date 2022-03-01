@@ -69,3 +69,4 @@ To generate `build-regexp.phar` you'll need to [download a recent release](https
 
  - https://github.com/s9e/RegexpBuilder - The library that powers this tool.
  - https://github.com/devongovett/regexgen - Similar tool written in JavaScript.
+ - https://github.com/pemistahl/grex - Similar tool written in Rust.
