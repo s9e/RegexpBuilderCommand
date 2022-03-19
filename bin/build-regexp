@@ -19,6 +19,12 @@ if (!class_exists('s9e\\RegexpBuilder\\Command\\Build'))
 	}
 }
 
+$version = '@git_tag@';
+if ($version[0] === '@')
+{
+	$version = Composer\InstalledVersions::getPrettyVersion('s9e/regexp-builder-command');
+}
+
 // Set the default name to match the name of this file
 class SingleCommand extends s9e\RegexpBuilder\Command\Build
 {
@@ -26,7 +32,7 @@ class SingleCommand extends s9e\RegexpBuilder\Command\Build
 }
 $command = new SingleCommand;
 
-$app = new Symfony\Component\Console\Application($command->getName(), '@git_tag@');
+$app = new Symfony\Component\Console\Application($command->getName(), $version);
 $app->add($command);
 $app->setDefaultCommand($command->getName(), true);
 $app->run();
