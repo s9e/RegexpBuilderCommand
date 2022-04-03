@@ -37,6 +37,13 @@ $ ./build-regexp.phar --infile strings.txt
 (?:one|t(?:hree|wo))
 ```
 
+Alternatively, the list of strings can be passed as a JSON array:
+```
+$ echo '["foo","bar"]' > strings.json
+$ ./build-regexp.phar --infile strings.json --infile-format json
+(?:bar|foo)
+```
+
 By default, the result is output in the terminal directly. Alternatively, it can be saved to a file specified via the `outfile` option. In the following example, we save the result to a `out.txt` file before checking its content:
 ```
 $ ./build-regexp.phar --outfile out.txt foo bar baz

@@ -16,6 +16,7 @@ use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use UnhandledMatchError;
 use s9e\RegexpBuilder\Builder;
+use s9e\RegexpBuilder\Command\InputFormatter\InputFormatterInterface;
 
 class Build extends Command
 {
@@ -28,7 +29,8 @@ class Build extends Command
 			null,
 			InputOption::VALUE_REQUIRED,
 			'Regexp preset: "java", "javascript", "pcre", "raw", or "re2"',
-			'pcre'
+			'pcre',
+			['java', 'javascript', 'pcre', 'raw', 're2']
 		);
 		$this->addOption(
 			'flags',
@@ -48,6 +50,14 @@ class Build extends Command
 			null,
 			InputOption::VALUE_REQUIRED,
 			'Input file'
+		);
+		$this->addOption(
+			'infile-format',
+			null,
+			InputOption::VALUE_REQUIRED,
+			'Format of the input file: "json" or "lsv" (line-separated values)',
+			'lsv',
+			['json', 'lsv']
 		);
 		$this->addOption(
 			'outfile',
@@ -147,7 +157,18 @@ class Build extends Command
 
 		$text = ($filepath === '-') ? $this->readStdin($input) : $this->readFile($filepath);
 
-		return preg_split('(\\r?\\n)', $text, -1, PREG_SPLIT_NO_EMPTY);
+		return $this->getInputFormatter($input)->format($text);
+	}
+
+	protected function getInputFormatter(InputInterface $input): InputFormatterInterface
+	{
+		$className = __NAMESPACE__ . '\\InputFormatter\\' . ucfirst(strtolower($input->getOption('infile-format')));
+		if (!class_exists($className))
+		{
+			throw new RuntimeException('Unsupported infile-format');
+		}
+
+		return new $className;
 	}
 
 	protected function readFile(string $filepath): string

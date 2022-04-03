@@ -20,7 +20,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"s9e\\RegexpBuilder\\Tests\\Command\\": "tests"
+			"s9e\\RegexpBuilder\\Command\\Tests\\": "tests"
 		}
 	},
 	"scripts": {

@@ -14,7 +14,6 @@ use s9e\RegexpBuilder\Command\Build;
 */
 class BuildTest extends TestCase
 {
-
 	public function testWriteFile()
 	{
 		vfsStream::setup('root');
@@ -169,6 +168,28 @@ class BuildTest extends TestCase
 			],
 			[
 				[
+					'--infile'        => vfsStream::url('root/strings.txt'),
+					'--infile-format' => 'lsv'
+				],
+				'[ab]',
+				function (CommandTester $commandTester): void
+				{
+					file_put_contents(vfsStream::url('root/strings.txt'), "a\nb");
+				}
+			],
+			[
+				[
+					'--infile'        => vfsStream::url('root/strings.json'),
+					'--infile-format' => 'json'
+				],
+				'[abd]',
+				function (CommandTester $commandTester): void
+				{
+					file_put_contents(vfsStream::url('root/strings.json'), '["a","b","d"]');
+				}
+			],
+			[
+				[
 					'--infile' => '-'
 				],
 				'[ab]',
@@ -270,6 +291,28 @@ class BuildTest extends TestCase
 					$path = vfsStream::url('root/unwritable.txt');
 					touch($path);
 					chmod($path, 0);
+				}
+			],
+			[
+				[
+					'--infile'        => vfsStream::url('root/invalid.json'),
+					'--infile-format' => 'json'
+				],
+				new RuntimeException('Input is not valid JSON'),
+				function (): void
+				{
+					file_put_contents(vfsStream::url('root/invalid.json'), 'invalid');
+				}
+			],
+			[
+				[
+					'--infile'        => vfsStream::url('root/file.txt'),
+					'--infile-format' => 'idk'
+				],
+				new RuntimeException('Unsupported infile-format'),
+				function (): void
+				{
+					file_put_contents(vfsStream::url('root/file.txt'), '');
 				}
 			],
 		];
