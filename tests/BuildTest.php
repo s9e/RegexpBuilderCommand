@@ -71,15 +71,22 @@ class BuildTest extends TestCase
 				[
 					'strings' => ['foo', 'bar']
 				],
+				'bar|foo'
+			],
+			[
+				[
+					'strings'      => ['foo', 'bar'],
+					'--standalone' => true
+				],
+				'bar|foo'
+			],
+			[
+				[
+					'strings'      => ['foo', 'bar'],
+					'--standalone' => false
+				],
 				'(?:bar|foo)'
 			],
-//			[
-//				[
-//					'strings'      => ['foo', 'bar'],
-//					'--standalone' => true
-//				],
-//				'/(?:bar|foo)/'
-//			],
 			[
 				[
 					'strings'  => ["\u{1F600}", "\u{1F601}"],

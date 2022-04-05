@@ -27,28 +27,28 @@ build-regexp 0.4.3
 Strings can be specified either directly in the command invocation or via an input file. The following shell example shows how to pass them in the command invocation as a space-separated list:
 ```
 $ ./build-regexp.phar foo bar baz
-(?:ba[rz]|foo)
+ba[rz]|foo
 ```
 
 In the following example, we create a file with each value on its own line, then we pass the name of the file via the `infile` option:
 ```
 $ echo -e "one\ntwo\nthree" > strings.txt
 $ ./build-regexp.phar --infile strings.txt
-(?:one|t(?:hree|wo))
+one|t(?:hree|wo)
 ```
 
 Alternatively, the list of strings can be passed as a JSON array:
 ```
 $ echo '["foo","bar"]' > strings.json
 $ ./build-regexp.phar --infile strings.json --infile-format json
-(?:bar|foo)
+bar|foo
 ```
 
 By default, the result is output in the terminal directly. Alternatively, it can be saved to a file specified via the `outfile` option. In the following example, we save the result to a `out.txt` file before checking its content:
 ```
 $ ./build-regexp.phar --outfile out.txt foo bar baz
 $ cat out.txt
-(?:ba[rz]|foo)
+ba[rz]|foo
 ```
 
 
