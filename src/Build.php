@@ -74,6 +74,18 @@ class Build extends Command
 			'Whether the regexp is meant to be used whole',
 			true
 		);
+		$this->addOption(
+			'with-delimiters',
+			null,
+			InputOption::VALUE_NONE,
+			"Output the regexp's delimiter"
+		);
+		$this->addOption(
+			'with-flags',
+			null,
+			InputOption::VALUE_NONE,
+			"Output the regexp's flags (requires --with-delimiters)"
+		);
 
 		$this->addArgument('strings', InputArgument::IS_ARRAY);
 	}
@@ -90,6 +102,15 @@ class Build extends Command
 		$builder = new Builder($config);
 		$builder->standalone = $input->getOption('standalone');
 		$regexp  = $builder->build($strings);
+
+		if ($input->getOption('with-delimiters'))
+		{
+			$regexp = $config['delimiter'][0] . $regexp . $config['delimiter'][-1];
+			if ($input->getOption('with-flags'))
+			{
+				$regexp .= $this->sortFlags($input->getOption('flags'));
+			}
+		}
 
 		$filepath = $input->getOption('outfile');
 		if ($filepath === '-')

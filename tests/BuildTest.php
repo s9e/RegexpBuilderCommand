@@ -132,23 +132,44 @@ class BuildTest extends TestCase
 				],
 				'[\\u{1F600}\\u{1F601}]'
 			],
-//			[
-//				[
-//					'strings'      => ["\u{1F600}", "\u{1F601}"],
-//					'--preset'     => 'javascript',
-//					'--standalone' => true
-//				],
-//				'/\\uD83D[\\uDE00\\uDE01]/'
-//			],
-//			[
-//				[
-//					'strings'      => ["\u{1F600}", "\u{1F601}"],
-//					'--flags'      => 'u',
-//					'--preset'     => 'javascript',
-//					'--standalone' => true
-//				],
-//				'/[\\u{1F600}\\u{1F601}]/u'
-//			],
+			[
+				[
+					'strings'           => ["\u{1F600}", "\u{1F601}"],
+					'--preset'          => 'javascript',
+					'--with-delimiters' => true,
+					'--with-flags'      => true
+				],
+				'/\\uD83D[\\uDE00\\uDE01]/'
+			],
+			[
+				[
+					'strings'           => ["\u{1F600}", "\u{1F601}"],
+					'--flags'           => 'u',
+					'--preset'          => 'javascript',
+					'--with-delimiters' => true,
+					'--with-flags'      => true
+				],
+				'/[\\u{1F600}\\u{1F601}]/u'
+			],
+			[
+				[
+					'strings'           => ["\u{1F600}", "\u{1F601}"],
+					'--preset'          => 'pcre',
+					'--with-delimiters' => true,
+					'--with-flags'      => true
+				],
+				'/\\xF0\\x9F\\x98[\\x80\\x81]/'
+			],
+			[
+				[
+					'strings'           => ["\u{1F600}", "\u{1F601}"],
+					'--flags'           => 'u',
+					'--preset'          => 'pcre',
+					'--with-delimiters' => true,
+					'--with-flags'      => true
+				],
+				'/[\\x{1F600}\\x{1F601}]/u'
+			],
 			[
 				[
 					'strings'  => ["\u{1F600}", "\u{1F601}"],
