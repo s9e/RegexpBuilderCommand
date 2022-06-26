@@ -108,7 +108,7 @@ class Build extends Command
 			$regexp = $config['delimiter'][0] . $regexp . $config['delimiter'][-1];
 			if ($input->getOption('with-flags'))
 			{
-				$regexp .= $this->sortFlags($input->getOption('flags'));
+				$regexp .= count_chars($input->getOption('flags'), 3);
 			}
 		}
 
@@ -209,14 +209,6 @@ class Build extends Command
 		$stream = ($input instanceof StreamableInputInterface) ? $input->getStream() : null;
 
 		return stream_get_contents($stream ?? STDIN);
-	}
-
-	protected function sortFlags(string $flags): string
-	{
-		$flags = array_unique(str_split($flags, 1));
-		sort($flags, SORT_STRING);
-
-		return implode('', $flags);
 	}
 
 	protected function writeFile(string $filepath, string $contents, bool $overwrite): void
