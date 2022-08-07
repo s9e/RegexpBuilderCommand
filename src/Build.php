@@ -36,7 +36,7 @@ class Build extends Command
 			'flags',
 			null,
 			InputOption::VALUE_REQUIRED,
-			'Regexp flags',
+			'Regexp flags/modifiers',
 			''
 		);
 		$this->addOption(
