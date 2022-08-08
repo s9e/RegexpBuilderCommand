@@ -7,6 +7,7 @@
 */
 namespace s9e\RegexpBuilder\Command;
 
+use ReflectionMethod;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -28,9 +29,9 @@ class Build extends Command
 			'preset',
 			null,
 			InputOption::VALUE_REQUIRED,
-			'Regexp preset: "java", "javascript", "pcre", "raw", or "re2"',
-			'pcre',
-			['java', 'javascript', 'pcre', 'raw', 're2']
+			'Regexp preset: "java", "javascript", "pcre", "pcre2", "raw", or "re2"',
+			'pcre2',
+			['java', 'javascript', 'pcre', 'pcre2', 'raw', 're2']
 		);
 		$this->addOption(
 			'flags',
@@ -98,14 +99,12 @@ class Build extends Command
 			throw new RuntimeException('No input');
 		}
 
-		$config  = $this->getBuilderConfig($input);
-		$builder = new Builder($config);
-		$builder->standalone = $input->getOption('standalone');
+		$builder = $this->getBuilder($input->getOptions());
 		$regexp  = $builder->build($strings);
 
 		if ($input->getOption('with-delimiters'))
 		{
-			$regexp = $config['delimiter'][0] . $regexp . $config['delimiter'][-1];
+			$regexp = '/' . $regexp . '/';
 			if ($input->getOption('with-flags'))
 			{
 				$regexp .= count_chars($input->getOption('flags'), 3);
@@ -125,44 +124,45 @@ class Build extends Command
 		return Command::SUCCESS;
 	}
 
-	protected function getBuilderConfig(InputInterface $input): array
+	protected function getBuilder(array $options): Builder
 	{
-		$preset  = strtolower($input->getOption('preset'));
-		$unicode = str_contains($input->getOption('flags'), 'u');
+		$options['modifiers'] = $options['flags'];
+
 		try
 		{
-			$config = match ($preset)
+			$factoryName = match (strtolower($options['preset']))
 			{
-				'java' => [
-					'input'  => 'Utf8',
-					'output' => 'PHP'
-				],
-				'javascript' => [
-					'input'        => 'Utf8',
-					'inputOptions' => ['useSurrogates' => !$unicode],
-					'output'       => 'JavaScript'
-				],
-				'pcre' => [
-					'input'  => ($unicode) ? 'Utf8' : 'Bytes',
-					'output' => 'PHP'
-				],
-				're2' => [
-					'input'  => 'Utf8',
-					'output' => 'PHP'
-				],
-				'raw' => [
-					'input'  => ($unicode) ? 'Utf8' : 'Bytes',
-					'output' => ($unicode) ? 'Utf8' : 'Bytes',
-				]
+				'java'       => 'Java',
+				'javascript' => 'JavaScript',
+				'pcre',
+				'pcre2',
+				'php'        => 'PHP',
+				're2'        => 'RE2',
+				'raw'        => (str_contains($options['flags'], 'u')) ? 'RawUTF8' : 'RawBytes'
 			};
 		}
 		catch (UnhandledMatchError)
 		{
-			throw new RuntimeException("Unknown preset '" . $preset . "'");
+			throw new RuntimeException("Unknown preset '" . $options['preset'] . "'");
 		}
-		$config['delimiter'] = '/';
 
-		return $config;
+		$className  = 's9e\\RegexpBuilder\\Factory\\' . $factoryName;
+		$callback   = $className . '::getBuilder';
+		$invokeArgs = [];
+
+		$reflectionMethod = new ReflectionMethod($callback);
+		foreach ($reflectionMethod->getParameters() as $parameter)
+		{
+			if (isset($options[$parameter->name]))
+			{
+				$invokeArgs[$parameter->name] = $options[$parameter->name];
+			}
+		}
+
+		$builder = $reflectionMethod->invokeArgs(null, $invokeArgs);
+		$builder->standalone = !empty($options['standalone']);
+
+		return $builder;
 	}
 
 	protected function getStrings(InputInterface $input): array
