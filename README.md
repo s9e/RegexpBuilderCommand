@@ -56,8 +56,8 @@ ba[rz]|foo
 
 Several presets are available to generate regexps for different engines. They determine how the input is interpreted, and how/which characters are escaped in the output. The following presets are available:
 
- - `pcre` escapes non-printing characters and characters outside of low ASCII using [PCRE's escape sequences](https://www.pcre.org/current/doc/html/pcre2syntax.html#SEC3) `\xhh` and `\x{hh..}`. If the `u` flag is specified, the regexp operates on Unicode codepoints. Otherwise, it operates on bytes.
- - `java` and `re2` are functionally identical to `pcre` and always operate on Unicode codepoints.
+ - `pcre` and `pcre2` escape non-printing characters and characters outside of low ASCII using [PCRE's escape sequences](https://www.pcre.org/current/doc/html/pcre2syntax.html#SEC3) `\xhh` and `\x{hh..}`. If the `u` flag is specified, the regexp operates on Unicode codepoints. Otherwise, it operates on bytes.
+ - `java` and `re2` are functionally equivalent to `pcre2` and always operate on Unicode codepoints.
  - `javascript` escapes non-printing characters and characters outside of low ASCII as `\xhh`, `\uhhhh`, and `\u{hhhhh}`. If the `u` flag is not present, characters outside the BMP are split into surrogate pairs.
  - `raw` does not escape any literals. If the `u` flag is specified, the regexp operates on Unicode codepoints. Otherwise, it operates on bytes and is not guaranteed to produce a UTF-8 string.
 
