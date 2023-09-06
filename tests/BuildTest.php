@@ -64,7 +64,7 @@ class BuildTest extends TestCase
 		$this->assertEquals($expectedOutput, $commandTester->getDisplay());
 	}
 
-	public function getSuccessTests(): array
+	public static function getSuccessTests(): array
 	{
 		return [
 			[
@@ -246,7 +246,7 @@ class BuildTest extends TestCase
 	}
 
 
-	public function getFailureTests(): array
+	public static function getFailureTests(): array
 	{
 		vfsStream::setup('root');
 
