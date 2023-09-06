@@ -1,4 +1,4 @@
-/.phpunit.result.cache
+/.phpunit.cache
 /bin/box.phar
 /bin/build-regexp.phar
 /vendor
