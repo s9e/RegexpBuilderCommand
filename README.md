@@ -10,7 +10,7 @@ There are two ways to use this command. You can download the [latest release as 
 $ wget -q https://github.com/s9e/RegexpBuilderCommand/releases/latest/download/build-regexp.phar
 $ chmod +x build-regexp.phar
 $ ./build-regexp.phar --version
-build-regexp 0.4.3
+build-regexp 1.0.0
 ```
 
 Or you can install the command as a [Composer](https://getcomposer.org/download/) dependency:
@@ -18,7 +18,7 @@ Or you can install the command as a [Composer](https://getcomposer.org/download/
 ```
 $ composer -q require s9e/regexp-builder-command
 $ vendor/bin/build-regexp --version
-build-regexp 0.4.3
+build-regexp 1.0.0
 ```
 
 
