@@ -8,11 +8,11 @@ jobs:
   build-phar:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
 
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
@@ -29,7 +29,7 @@ jobs:
         run: composer build-phar
 
       - name: Upload PHAR
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: build-regexp.phar
           path: bin/build-regexp.phar
@@ -40,7 +40,7 @@ jobs:
       - build-phar
 
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: build-regexp.phar
           path: .

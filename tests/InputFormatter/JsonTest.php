@@ -2,12 +2,11 @@
 
 namespace s9e\RegexpBuilder\Command\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use s9e\RegexpBuilder\Command\InputFormatter\Json;
 
-/**
-* @covers s9e\RegexpBuilder\Command\InputFormatter\Json
-*/
+#[CoversClass(Json::class)]
 class JsonTest extends TestCase
 {
 	public function test()

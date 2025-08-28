@@ -4,14 +4,14 @@ namespace s9e\RegexpBuilder\Command\Tests;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use Symfony\Component\Console\Tester\CommandTester;
 use org\bovigo\vfs\vfsStream;
 use s9e\RegexpBuilder\Command\Build;
 
-/**
-* @covers s9e\RegexpBuilder\Command\Build
-*/
+#[CoversClass(Build::class)]
 class BuildTest extends TestCase
 {
 	public function testWriteFile()
@@ -47,10 +47,8 @@ class BuildTest extends TestCase
 		]);
 	}
 
-	/**
-	* @dataProvider getSuccessTests
-	*/
-	public function testSuccess(array $input, string $expectedOutput, callable $setup = null): void
+	#[DataProvider('getBuildSuccessTests')]
+	public function testBuildSuccess(array $input, string $expectedOutput, callable $setup = null): void
 	{
 		$commandTester = new CommandTester(new Build);
 		if (isset($setup))
@@ -64,7 +62,7 @@ class BuildTest extends TestCase
 		$this->assertEquals($expectedOutput, $commandTester->getDisplay());
 	}
 
-	public static function getSuccessTests(): array
+	public static function getBuildSuccessTests(): array
 	{
 		return [
 			[
@@ -229,10 +227,8 @@ class BuildTest extends TestCase
 		];
 	}
 
-	/**
-	* @dataProvider getFailureTests
-	*/
-	public function testFailure(array $input, Exception $exception, callable $setup = null): never
+	#[DataProvider('getBuildFailureTests')]
+	public function testBuildFailure(array $input, Exception $exception, callable $setup = null): never
 	{
 		$this->expectException(get_class($exception));
 		$this->expectExceptionMessage($exception->getMessage());
@@ -246,7 +242,7 @@ class BuildTest extends TestCase
 	}
 
 
-	public static function getFailureTests(): array
+	public static function getBuildFailureTests(): array
 	{
 		vfsStream::setup('root');
 
