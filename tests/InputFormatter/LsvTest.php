@@ -2,12 +2,11 @@
 
 namespace s9e\RegexpBuilder\Command\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use s9e\RegexpBuilder\Command\InputFormatter\Lsv;
 
-/**
-* @covers s9e\RegexpBuilder\Command\InputFormatter\Lsv
-*/
+#[CoversClass(Lsv::class)]
 class LsvTest extends TestCase
 {
 	public function test()
